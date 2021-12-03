@@ -23,6 +23,7 @@ class ViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         UIUtility.styleAsSalmonButton(button)
         button.setTitle("Sono pronto. Vai!", for: .normal)
+        button.addTarget(self, action: #selector(buttonStart), for: .touchUpInside)
         return button
     }()
     
@@ -133,6 +134,22 @@ class ViewController: UIViewController {
             startButton.isEnabled = false
             startButton.isUserInteractionEnabled = false
             startButton.alpha = 0.5
+        }
+    }
+    
+    // MARK: - Actions
+    
+    @objc func buttonStart() {
+        // Save User and start
+        
+        let user = User()
+        user.name = textField.text
+        
+        dismiss(animated: true) {
+            
+            let next = QuizController()
+            let navigation = UINavigationController(rootViewController: next)
+            self.present(navigation, animated: true, completion: nil)
         }
     }
 }
