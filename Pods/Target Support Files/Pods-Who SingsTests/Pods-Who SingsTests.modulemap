@@ -1,0 +1,6 @@
+framework module Pods_Who_SingsTests {
+  umbrella header "Pods-Who SingsTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
