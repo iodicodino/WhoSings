@@ -11,14 +11,35 @@ import UIKit
 
 class UIUtility {
     
+    static func styleAsCardView(_ view: UIView?) {
+        UIUtility.addContainerShadow(view)
+        UIUtility.addCornerRadius(view, withRadius: 24)
+        view?.backgroundColor = .white
+    }
+    
     static func styleAsSalmonButton(_ button: UIButton?) {
         button?.backgroundColor = Constants.salmon
-        button?.tintColor = .white
-        button?.setTitle("Vai!", for: .normal)
         button?.setTitleColor(.white, for: .normal)
         button?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         UIUtility.addCornerRadius(button, withRadius: Constants.buttonCornerRadius)
     }
+    
+    static func styleAsOptionButton(_ button: UIButton?) {
+        button?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        UIUtility.addCornerRadius(button, withRadius: 25)
+        UIUtility.addBorder(button, withColor: Constants.border, width: 2)
+        button?.backgroundColor = Constants.background
+        button?.setTitleColor(.black, for: .normal)
+    }
+    
+    static func styleAsOptionButtonSelected(_ button: UIButton?) {
+        button?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        UIUtility.addCornerRadius(button, withRadius: 25)
+        UIUtility.addBorder(button, withColor: Constants.border, width: 2)
+        button?.backgroundColor = Constants.purple
+        button?.setTitleColor(.white, for: .normal)
+    }
+    
     
     static func addBorder(_ view: UIView?, withColor color: UIColor?, width: CGFloat) {
         if let color = color {
@@ -62,7 +83,7 @@ class UIUtility {
     
     static func addContainerShadow(_ view: UIView?) {
         let shadowColor = UIColor.black.withAlphaComponent(0.14)
-        let shadowRadius = 2.0 as CGFloat
+        let shadowRadius = 10 as CGFloat
         let shadowOffset = CGSize.zero
         
         addShadow(view, withColor: shadowColor, radius: shadowRadius, offset: shadowOffset)

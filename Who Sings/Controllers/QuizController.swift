@@ -15,63 +15,63 @@ class QuizController: UIViewController {
     private let timerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        UIUtility.styleAsCardView(view)
         return view
     }()
     
     private let timerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.text = "00:00"
         return label
     }()
     
     private let cardView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        UIUtility.styleAsCardView(view)
         return view
     }()
     
-    private let firstOptionView: UIView = {
-        let view = UIView()
+    private let firstOptionButton: UIButton = {
+        let view = UIButton()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        UIUtility.styleAsOptionButton(view)
         return view
     }()
     
     private let firstOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.text = "Ciccio"
         return label
     }()
     
-    private let secondOptionView: UIView = {
-        let view = UIView()
+    private let secondOptionButton: UIButton = {
+        let view = UIButton()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        UIUtility.styleAsOptionButton(view)
         return view
     }()
     
     private let secondOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.text = "Pasticcio"
         return label
     }()
     
-    private let thirdOptionView: UIView = {
-        let view = UIView()
+    private let thirdOptionButton: UIButton = {
+        let view = UIButton()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        UIUtility.styleAsOptionButton(view)
         return view
     }()
     
     private let thirdOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.text = "Lady Gaga"
         return label
     }()
     
@@ -79,7 +79,7 @@ class QuizController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         UIUtility.styleAsSalmonButton(button)
-        button.setTitle("Sono pronto. Vai!", for: .normal)
+        button.setTitle("Conferma", for: .normal)
         button.addTarget(self, action: #selector(buttonContinue), for: .touchUpInside)
         return button
     }()
@@ -94,12 +94,12 @@ class QuizController: UIViewController {
         view.addSubview(timerView)
         timerView.addSubview(timerLabel)
         view.addSubview(cardView)
-        cardView.addSubview(firstOptionView)
-        firstOptionView.addSubview(firstOptionLabel)
-        cardView.addSubview(secondOptionView)
-        secondOptionView.addSubview(secondOptionLabel)
-        cardView.addSubview(thirdOptionView)
-        thirdOptionView.addSubview(thirdOptionLabel)
+        cardView.addSubview(firstOptionButton)
+        firstOptionButton.addSubview(firstOptionLabel)
+        cardView.addSubview(secondOptionButton)
+        secondOptionButton.addSubview(secondOptionLabel)
+        cardView.addSubview(thirdOptionButton)
+        thirdOptionButton.addSubview(thirdOptionLabel)
         view.addSubview(continueButton)
         
         continueButton.isEnabled = false
@@ -123,34 +123,38 @@ class QuizController: UIViewController {
         constraints.append(cardView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(cardView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(firstOptionView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: Constants.padding))
-        constraints.append(firstOptionView.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(firstOptionView.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(firstOptionView.heightAnchor.constraint(equalToConstant: 50))
+        constraints.append(firstOptionButton.topAnchor.constraint(equalTo: cardView.topAnchor, constant: Constants.padding))
+        constraints.append(firstOptionButton.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(firstOptionButton.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(firstOptionButton.heightAnchor.constraint(equalToConstant: 50))
         
-        constraints.append(firstOptionLabel.centerYAnchor.constraint(equalTo: firstOptionView.safeAreaLayoutGuide.centerYAnchor))
-        constraints.append(firstOptionLabel.leadingAnchor.constraint(equalTo: firstOptionView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(firstOptionLabel.trailingAnchor.constraint(equalTo: firstOptionView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(firstOptionLabel.centerYAnchor.constraint(equalTo: firstOptionButton.safeAreaLayoutGuide.centerYAnchor))
+        constraints.append(firstOptionLabel.leadingAnchor.constraint(equalTo: firstOptionButton.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(firstOptionLabel.trailingAnchor.constraint(equalTo: firstOptionButton.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(secondOptionView.topAnchor.constraint(equalTo: firstOptionView.bottomAnchor, constant: Constants.padding))
-        constraints.append(secondOptionView.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(secondOptionView.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(secondOptionView.heightAnchor.constraint(equalToConstant: 50))
+        constraints.append(secondOptionButton.topAnchor.constraint(equalTo: firstOptionButton.bottomAnchor, constant: Constants.padding))
+        constraints.append(secondOptionButton.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(secondOptionButton.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(secondOptionButton.heightAnchor.constraint(equalToConstant: 50))
         
-        constraints.append(secondOptionLabel.centerYAnchor.constraint(equalTo: secondOptionView.safeAreaLayoutGuide.centerYAnchor))
-        constraints.append(secondOptionLabel.leadingAnchor.constraint(equalTo: secondOptionView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(secondOptionLabel.trailingAnchor.constraint(equalTo: secondOptionView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(secondOptionLabel.centerYAnchor.constraint(equalTo: secondOptionButton.safeAreaLayoutGuide.centerYAnchor))
+        constraints.append(secondOptionLabel.leadingAnchor.constraint(equalTo: secondOptionButton.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(secondOptionLabel.trailingAnchor.constraint(equalTo: secondOptionButton.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(thirdOptionView.topAnchor.constraint(equalTo: secondOptionView.bottomAnchor, constant: Constants.padding))
-        constraints.append(thirdOptionView.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(thirdOptionView.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(thirdOptionView.bottomAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
-        constraints.append(thirdOptionView.heightAnchor.constraint(equalToConstant: 50))
+        constraints.append(thirdOptionButton.topAnchor.constraint(equalTo: secondOptionButton.bottomAnchor, constant: Constants.padding))
+        constraints.append(thirdOptionButton.leadingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(thirdOptionButton.trailingAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(thirdOptionButton.bottomAnchor.constraint(equalTo: cardView.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        constraints.append(thirdOptionButton.heightAnchor.constraint(equalToConstant: 50))
+        
+        constraints.append(thirdOptionLabel.centerYAnchor.constraint(equalTo: thirdOptionButton.safeAreaLayoutGuide.centerYAnchor))
+        constraints.append(thirdOptionLabel.leadingAnchor.constraint(equalTo: thirdOptionButton.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(thirdOptionLabel.trailingAnchor.constraint(equalTo: thirdOptionButton.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
         constraints.append(continueButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: Constants.padding))
         constraints.append(continueButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(continueButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(continueButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        constraints.append(continueButton.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
         constraints.append(continueButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight))
         
         // Activate
