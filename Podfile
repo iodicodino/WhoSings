@@ -6,7 +6,7 @@ target 'Who Sings' do
   use_frameworks!
 
   pod 'Alamofire'
-  # Pods for Who Sings
+  pod 'MBProgressHUD'
 
   target 'Who SingsTests' do
     inherit! :search_paths

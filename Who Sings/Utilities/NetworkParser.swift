@@ -74,4 +74,62 @@ class NetworkParser {
         
         return nil
     }
+    
+    
+    // MARK: - Lyrics
+    
+    static func parseLyrics(_ dictionary: Any?) -> String? {
+        guard let dictionary = dictionary as? NSDictionary else {
+            return nil
+        }
+
+        guard let body = parseNetworkBody(from: dictionary) else {
+            return nil
+        }
+        
+        guard let lyrics = body["lyrics"] as? NSDictionary else {
+            return nil
+        }
+        
+        let parsedObject = lyrics["lyrics_body"] as? String
+        return parsedObject
+    }
+    
+    // MARK: - Artists
+    
+    static func parseArtistList(_ dictionary: Any?) -> [Artist] {
+        guard let dictionary = dictionary as? NSDictionary else {
+            return []
+        }
+
+        guard let body = parseNetworkBody(from: dictionary) else {
+            return []
+        }
+        
+        guard let artistList = body["artist_list"] as? [NSDictionary] else {
+            return []
+        }
+        
+        var parsedObjects: [Artist] = []
+        
+        for artist in artistList {
+            if let object = parseArtist(artist) {
+                parsedObjects.append(object)
+            }
+        }
+        
+        return parsedObjects
+    }
+    
+    static func parseArtist(_ dictionary: NSDictionary) -> Artist? {
+        if let artist = dictionary["artist"] as? NSDictionary {
+            if let data = try? JSONSerialization.data(withJSONObject: artist, options: .prettyPrinted) {
+                if let parsedObject = try? JSONDecoder().decode(Artist.self, from: data) {
+                    return parsedObject
+                }
+            }
+        }
+        
+        return nil
+    }
 }

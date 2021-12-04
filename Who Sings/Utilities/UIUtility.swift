@@ -40,7 +40,6 @@ class UIUtility {
         button?.setTitleColor(.white, for: .normal)
     }
     
-    
     static func addBorder(_ view: UIView?, withColor color: UIColor?, width: CGFloat) {
         if let color = color {
             view?.layer.borderColor = color.cgColor

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 struct Track: Decodable {
@@ -21,4 +22,20 @@ struct Track: Decodable {
         case artist_id = "artist_id"
         case artist_name = "artist_name"
     }
+}
+
+struct Artist: Decodable {
+    var artist_id: Int
+    var artist_name: String
+    
+    enum CodingKeys: String, CodingKey {
+        case artist_id = "artist_id"
+        case artist_name = "artist_name"
+    }
+}
+
+struct Option {
+    var button: UIButton
+    var label: UILabel
+    var isRight: Bool
 }
