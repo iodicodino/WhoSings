@@ -246,7 +246,11 @@ class QuizController: UIViewController {
     // MARK: - Actions
     
     @objc func buttonContinue() {
-        
+        if selectedButton == options.filter({$0.isRight}).first?.button {
+            /// Correct answer
+        } else {
+            /// Wrong answer
+        }
     }
     
     @objc func buttonFirstOption() {
