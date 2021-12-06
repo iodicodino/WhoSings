@@ -9,6 +9,9 @@ import UIKit
 
 class LoginController: UIViewController {
 
+    var delegate: LoginControllerDelegate?
+    
+    
     // MARK: - UI Elements
     
     private let imageView: UIImageView = {
@@ -18,10 +21,8 @@ class LoginController: UIViewController {
         return view
     }()
     
-    private let startButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        UIUtility.styleAsSalmonButton(button)
+    private let startButton: SalmonButton = {
+        let button = SalmonButton()
         button.setTitle("Sono pronto. Vai!", for: .normal)
         button.addTarget(self, action: #selector(buttonStart), for: .touchUpInside)
         return button
@@ -146,7 +147,12 @@ class LoginController: UIViewController {
         user.name = textField.text
         Constants.connectedUser = user
         
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            self.delegate?.didStartGame(self)
+        }
     }
 }
 
+protocol LoginControllerDelegate: NSObjectProtocol {
+    func didStartGame(_ sender: LoginController)
+}

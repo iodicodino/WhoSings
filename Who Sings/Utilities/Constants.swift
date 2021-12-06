@@ -10,24 +10,29 @@ import UIKit
 
 class Constants {
     
+    // MARK: - General
+    
     static var connectedUser: User?
+    static var pointsPerCorrectAnswer: Int { return 10 }
+    
     
     // MARK: - UI
     
-    static let padding: CGFloat = 30
-    static let buttonHeight: CGFloat = 50
-    static let buttonCornerRadius: CGFloat = 8
+    static var padding: CGFloat { return 30 }
+    static var buttonHeight: CGFloat { return 50 }
+    static var buttonCornerRadius: CGFloat { return 8 }
     
     
     // MARK: - Colors
     
-    static let salmon: UIColor = UIColor(rgb: 0xee655b)
-    static let background: UIColor = UIColor(rgb: 0xf8fafb)
-    static let border: UIColor = UIColor(rgb: 0xeeeeee)
-    static let purple: UIColor = UIColor(rgb: 0x6574ea)
+    static var salmon: UIColor { return UIColor(rgb: 0xee655b) }
+    static var background: UIColor { return UIColor(rgb: 0xf8fafb) }
+    static var border: UIColor { return UIColor(rgb: 0xeeeeee) }
+    static var purple: UIColor { return UIColor(rgb: 0x6574ea) }
     
     
     // MARK: - Images
     
     static var questionMarkImage = UIImage(named: "question-mark")
+    static var profileImage = UIImage(named: "brain")
 }

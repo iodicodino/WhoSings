@@ -8,6 +8,15 @@
 import Foundation
 import Alamofire
 
+// MARK: - Completions
+
+typealias EmptyCompletion = (() -> Void)
+typealias TrackCompletion = ((Track?) -> Void)
+typealias LyricsCompletion = ((String?) -> Void)
+typealias TrackAndLineCompletion = ((Track, String) -> Void)
+typealias ArtistsCompletion = (([Artist]?) -> Void)
+
+
 class NetworkUtility {
     
     // MARK: - Base urls
@@ -17,14 +26,6 @@ class NetworkUtility {
     private static let endpoint: String = baseURL + APIVersion + "/"
     
     private static let apikey: String = "f8c86a1b7c8b921a4a8252815ca62e03"
-    
-    
-    // MARK: - Completions
-    
-    typealias TrackCompletion = ((Track?) -> Void)
-    typealias LyricsCompletion = ((String?) -> Void)
-    typealias TrackAndLineCompletion = ((Track, String) -> Void)
-    typealias ArtistsCompletion = (([Artist]?) -> Void)
     
     // MARK: - Track
     

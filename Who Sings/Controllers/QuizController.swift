@@ -10,13 +10,25 @@ import UIKit
 
 class QuizController: UIViewController {
     
+    // MARK: - Initializers
+    
     public var line: String!
     public var track: Track!
     
-    // MARK: - UI Elements
+    public var delegate: QuizControllerDelegate?
+    
+    // MARK: - Private var
     
     private var options: [Option] = []
     private var selectedButton: UIButton?
+    
+    private var correctOption: Option {
+        return options.filter({$0.isRight}).first!
+    }
+    
+    private var timer: Timer?
+    
+    // MARK: - UI Elements
     
     private let timerLabel: UILabel = {
         let label = UILabel()
@@ -24,7 +36,7 @@ class QuizController: UIViewController {
         label.textColor = Constants.purple
         label.font = UIFont.boldSystemFont(ofSize: 40)
         label.textAlignment = .center
-        label.text = "00:00"
+        label.text = "10s"
         return label
     }()
     
@@ -39,16 +51,11 @@ class QuizController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.text = "Lorem ipsum dolor sit amet"
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
     
-    private let cardView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        UIUtility.styleAsCardView(view)
-        return view
-    }()
+    private let cardView = CardView()
     
     private let firstOptionButton: UIButton = {
         let button = UIButton()
@@ -61,7 +68,6 @@ class QuizController: UIViewController {
     private let firstOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ciccio"
         return label
     }()
     
@@ -76,7 +82,6 @@ class QuizController: UIViewController {
     private let secondOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Pasticcio"
         return label
     }()
     
@@ -91,7 +96,6 @@ class QuizController: UIViewController {
     private let thirdOptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Lady Gaga"
         return label
     }()
     
@@ -161,7 +165,17 @@ class QuizController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        var counter = 10
         
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+            [weak self] timer in
+            counter -= 1
+            
+            self?.timerLabel.text = String(counter) + "s"
+            if counter == 0 {
+                timer.invalidate()
+            }
+        }
     }
     
     private func addConstraints() {
@@ -178,9 +192,10 @@ class QuizController: UIViewController {
         constraints.append(cardSongView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(cardSongView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(cardSongLabel.centerYAnchor.constraint(equalTo: cardSongView.centerYAnchor))
         constraints.append(cardSongLabel.leadingAnchor.constraint(equalTo: cardSongView.leadingAnchor, constant: Constants.padding))
-        constraints.append(cardSongLabel.trailingAnchor.constraint(equalTo: cardSongView.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(cardSongLabel.trailingAnchor.constraint(equalTo: cardSongView.trailingAnchor, constant: -Constants.padding))
+        constraints.append(cardSongLabel.topAnchor.constraint(equalTo: cardSongView.topAnchor, constant: 10))
+        constraints.append(cardSongLabel.bottomAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: -10))
         
         constraints.append(cardView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
         constraints.append(cardView.topAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: Constants.padding))
@@ -235,6 +250,20 @@ class QuizController: UIViewController {
         }
     }
     
+    private func styleButtonAsCorrect(_ button: UIButton, correct: Bool) {
+        if correct {
+            button.backgroundColor = .green
+        } else {
+            button.backgroundColor = .red
+        }
+        
+        for subview in button.subviews {
+            if let label = subview as? UILabel {
+                label.textColor = .white
+            }
+        }
+    }
+    
     private func enableButtonIfNeeded() {
         if !continueButton.isEnabled {
             continueButton.isEnabled = true
@@ -243,13 +272,44 @@ class QuizController: UIViewController {
         }
     }
     
+    private func checkCorrectAnswer() -> Bool {
+        guard let selectedButton = selectedButton else {
+            return false
+        }
+        
+        timer?.invalidate()
+        
+        if selectedButton == correctOption.button {
+            // Correct answer
+            styleButtonAsCorrect(selectedButton, correct: true)
+            Utility.currentScore += Constants.pointsPerCorrectAnswer
+            
+            return true
+        } else {
+            // Wrong answer
+            styleButtonAsCorrect(selectedButton, correct: false)
+            styleButtonAsCorrect(correctOption.button, correct: true)
+            
+            return false
+        }
+    }
+    
+    
     // MARK: - Actions
     
     @objc func buttonContinue() {
-        if selectedButton == options.filter({$0.isRight}).first?.button {
-            /// Correct answer
+        let correctResult = checkCorrectAnswer()
+        
+        if correctResult {
+            self.delegate?.didRepeatGame(self)
+            self.dismiss(animated: true, completion: nil)
         } else {
-            /// Wrong answer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                UIUtility.showSimpleAlert(title: "Hai perso!", message: "Vai al tuo risultato!", button: "Vai!", controller: self) {
+                    self.delegate?.didEndGame(self)
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
         }
     }
     
@@ -279,4 +339,10 @@ class QuizController: UIViewController {
         styleButtonAsSelected(secondOptionButton, secondOptionLabel, selected: false)
         styleButtonAsSelected(thirdOptionButton, thirdOptionLabel, selected: true)
     }
+}
+
+protocol QuizControllerDelegate: NSObjectProtocol {
+    
+    func didEndGame(_ sender: QuizController)
+    func didRepeatGame(_ sender: QuizController)
 }

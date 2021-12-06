@@ -10,7 +10,10 @@ import UIKit
 import MBProgressHUD
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, LoginControllerDelegate, QuizControllerDelegate {
+    
+    
+    // MARK: - Setup
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,37 +23,68 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let progressHUD = MBProgressHUD(view: view)
-        
         if Constants.connectedUser == nil {
             let next = LoginController()
             next.modalPresentationStyle = .fullScreen
+            next.delegate = self
             present(next, animated: true, completion: nil)
-        } else {
-            
-            //progressHUD.show(animated: true)
-            
+        }
+    }
+    
+    
+    // MARK: - Private functions
+    
+    private func requestArtistsIfNeeded(_ completion: @escaping () -> Void) {
+        if Utility.artists.count == 0 {
             NetworkUtility.requestArtists {
-                [weak self] artists in
+                artists in
                 
                 if let artists = artists {
                     Utility.artists = artists
                     
-                    NetworkUtility.requestRandomTrackWithRandomLine {
-                        [weak self] track, line in
-                        
-                        let next = QuizController()
-                        next.line = line
-                        next.track = track
-                        
-                        let navigation = UINavigationController(rootViewController: next)
-                        navigation.modalPresentationStyle = .fullScreen
-                        self?.present(navigation, animated: true)
-                        
-                    }
+                    completion()
                 }
             }
+        } else {
+            completion()
         }
+    }
+    
+    private func startQuiz() {
+        MBProgressHUD.showAdded(to: view, animated: true)
+        
+        requestArtistsIfNeeded() {
+            NetworkUtility.requestRandomTrackWithRandomLine {
+                [weak self] track, line in
+                
+                MBProgressHUD.hide(for: self!.view, animated: true)
+                
+                let next = QuizController()
+                next.line = line
+                next.track = track
+                next.delegate = self
+                next.modalPresentationStyle = .fullScreen
+                self?.present(next, animated: true)
+            }
+        }
+    }
+    
+    
+    // MARK: - LoginController Delegate
+    
+    func didStartGame(_ sender: LoginController) {
+        startQuiz()
+    }
+    
+    
+    // MARK: - QuizController Delegate
+    
+    func didEndGame(_ sender: QuizController) {
+        // TODO: Go to profile
+    }
+    
+    func didRepeatGame(_ sender: QuizController) {
+        startQuiz()
     }
     
 }

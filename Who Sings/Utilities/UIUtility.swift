@@ -11,6 +11,8 @@ import UIKit
 
 class UIUtility {
     
+    // MARK: - General
+    
     static func styleAsCardView(_ view: UIView?) {
         UIUtility.addContainerShadow(view)
         UIUtility.addCornerRadius(view, withRadius: 24)
@@ -92,6 +94,18 @@ class UIUtility {
     
     static func removeShadow(_ view: UIView?) {
         view?.layer.shadowOpacity = 0.0
+    }
+    
+    
+    // MARK: - Alerts
+    
+    static func showSimpleAlert(title: String, message: String, button: String, controller: UIViewController, completion: EmptyCompletion?) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: button, style: UIAlertAction.Style.cancel, handler: { action in
+            completion?()
+        }))
+        
+        controller.present(alert, animated: true, completion: nil)
     }
 }
 

@@ -11,6 +11,8 @@ class Utility {
     
     static var artists: [Artist] = []
     
+    static var currentScore: Int = 0
+    
     static func getRandomLineFromLyrics(_ lyrics: String) -> String {
         
         let lineArray = lyrics.components(separatedBy: "\n")
