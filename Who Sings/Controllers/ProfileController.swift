@@ -10,6 +10,10 @@ import UIKit
 
 class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    
+    private var dataSource: [Score] = []
+    
+    
     // MARK: - UI Elements
     
     private let imageView: UIImageView = {
@@ -26,7 +30,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = Constants.connectedUser?.name ?? "Provolone"
+        label.text = UserUtility.connectedUser?.name ?? "Provolone"
         return label
     }()
     
@@ -35,7 +39,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     private let lastScoreTitle: CustomLabel = {
         let label = CustomLabel()
         label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textAlignment = .left
+        label.textAlignment = .right
         label.numberOfLines = 0
         label.text = "Ultimo punteggio:"
         return label
@@ -43,14 +47,22 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     
     private let lastScoreLabel: CustomLabel = {
         let label = CustomLabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         label.textAlignment = .left
         label.numberOfLines = 0
-        label.text = String(Constants.connectedUser?.scoreList.last ?? 0)
+        label.textColor = Constants.salmon
+        label.text = UserUtility.connectedUser?.scoreList.last?.pointsString ?? "0pt"
         return label
     }()
     
-    private let tableView = UITableView()
+    private let tableView: UITableView = {
+        let view = UITableView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.separatorStyle = .none
+        return view
+    }()
+    
     
     // MARK: - Setup
     
@@ -70,6 +82,17 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         view.addSubview(tableView)
         
         addConstraints()
+        
+        //dataSource = Constants.connectedUser?.scoreList ?? []
+        
+        let scores = [Score(points: 10, date: Date()),
+                      Score(points: 9, date: Date()),
+                      Score(points: 5, date: Date()),
+                      Score(points: 7, date: Date()),
+                      Score(points: 4, date: Date())]
+        dataSource = scores
+        
+        tableView.reloadData()
     }
 
 
@@ -85,6 +108,24 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         constraints.append(usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(usernameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
+        constraints.append(containerLastScore.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 10))
+        constraints.append(containerLastScore.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(containerLastScore.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        
+        constraints.append(lastScoreTitle.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: 10))
+        constraints.append(lastScoreTitle.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: 10))
+        constraints.append(lastScoreTitle.leadingAnchor.constraint(equalTo: containerLastScore.leadingAnchor, constant: 10))
+        constraints.append(lastScoreLabel.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: 10))
+        constraints.append(lastScoreLabel.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: 10))
+        constraints.append(lastScoreLabel.leadingAnchor.constraint(equalTo: lastScoreTitle.trailingAnchor, constant: 10))
+        constraints.append(lastScoreLabel.trailingAnchor.constraint(equalTo: containerLastScore.trailingAnchor, constant: -10))
+        constraints.append(lastScoreLabel.widthAnchor.constraint(equalTo: lastScoreTitle.widthAnchor))
+        
+        constraints.append(tableView.topAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.padding))
+        constraints.append(tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        
         // Activate
         NSLayoutConstraint.activate(constraints)
     }
@@ -93,10 +134,16 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     // MARK: - TableView Delegate
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Constants.connectedUser?.scoreList.count ?? 0
+        return dataSource.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell.ini
+        let cell = ProfileCell()
+        cell.awakeFromNib()
+        
+        let currentScore = dataSource[indexPath.row]
+        cell.setupWithScore(currentScore)
+        
+        return cell
     }
 }

@@ -145,7 +145,7 @@ class LoginController: UIViewController {
         
         let user = User()
         user.name = textField.text
-        Constants.connectedUser = user
+        UserUtility.setConnectedUser(user)
         
         self.dismiss(animated: true) {
             self.delegate?.didStartGame(self)

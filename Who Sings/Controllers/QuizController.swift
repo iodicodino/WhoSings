@@ -282,8 +282,6 @@ class QuizController: UIViewController {
         if selectedButton == correctOption.button {
             // Correct answer
             styleButtonAsCorrect(selectedButton, correct: true)
-            Utility.currentScore += Constants.pointsPerCorrectAnswer
-            
             return true
         } else {
             // Wrong answer
@@ -301,13 +299,22 @@ class QuizController: UIViewController {
         let correctResult = checkCorrectAnswer()
         
         if correctResult {
-            self.delegate?.didRepeatGame(self)
-            self.dismiss(animated: true, completion: nil)
+            // Increase current score
+            Utility.currentScore += Constants.pointsPerCorrectAnswer
+            
+            self.dismiss(animated: true) {
+                self.delegate?.didRepeatGame(self)
+            }
         } else {
+            // Save total score
+            let totalScore = Score(points: Utility.currentScore, date: Date())
+            UserUtility.connectedUser?.scoreList.append(totalScore)
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 UIUtility.showSimpleAlert(title: "Hai perso!", message: "Vai al tuo risultato!", button: "Vai!", controller: self) {
-                    self.delegate?.didEndGame(self)
-                    self.dismiss(animated: true, completion: nil)
+                    self.dismiss(animated: true) {
+                        self.delegate?.didEndGame(self)
+                    }
                 }
             }
         }

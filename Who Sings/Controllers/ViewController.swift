@@ -23,10 +23,14 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if Constants.connectedUser == nil {
+        if UserUtility.connectedUser == nil {
             let next = LoginController()
             next.modalPresentationStyle = .fullScreen
             next.delegate = self
+            present(next, animated: true, completion: nil)
+        } else {
+            let next = ProfileController()
+            next.modalPresentationStyle = .fullScreen
             present(next, animated: true, completion: nil)
         }
     }
@@ -80,7 +84,9 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
     // MARK: - QuizController Delegate
     
     func didEndGame(_ sender: QuizController) {
-        // TODO: Go to profile
+        let next = ProfileController()
+        next.modalPresentationStyle = .fullScreen
+        present(next, animated: true, completion: nil)
     }
     
     func didRepeatGame(_ sender: QuizController) {

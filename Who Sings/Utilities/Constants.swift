@@ -12,9 +12,11 @@ class Constants {
     
     // MARK: - General
     
-    static var connectedUser: User?
     static var pointsPerCorrectAnswer: Int { return 10 }
     
+    // MARK: - User defaults
+    
+    static var connectedUserDefaults: String { return "connectedUser" }
     
     // MARK: - UI
     
