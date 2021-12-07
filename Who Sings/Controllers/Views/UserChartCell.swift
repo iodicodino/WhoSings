@@ -43,8 +43,9 @@ class UserChartCell: UITableViewCell {
     }
     
     private func setupViews() {
-        UIUtility.addCircularCornerRadius(positionContainer)
+        positionContainer.translatesAutoresizingMaskIntoConstraints = false
         UIUtility.addBorder(positionContainer, withColor: Constants.purple, width: 2)
+        UIUtility.addCornerRadius(positionContainer, withRadius: 15)
     }
     
     
@@ -57,18 +58,19 @@ class UserChartCell: UITableViewCell {
         constraints.append(cardView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -5))
         constraints.append(cardView.heightAnchor.constraint(equalToConstant: 50))
         
-        constraints.append(positionContainer.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 5))
+        constraints.append(positionContainer.heightAnchor.constraint(equalToConstant: 30))
+        constraints.append(positionContainer.widthAnchor.constraint(equalToConstant: 30))
+        constraints.append(positionContainer.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: Constants.padding))
+        constraints.append(positionContainer.trailingAnchor.constraint(equalTo: labelName.leadingAnchor, constant: -5))
         constraints.append(positionContainer.centerYAnchor.constraint(equalTo: cardView.centerYAnchor))
-        constraints.append(positionContainer.leadingAnchor.constraint(equalTo: labelName.trailingAnchor, constant: 5))
-        constraints.append(positionContainer.heightAnchor.constraint(equalToConstant: 20))
                            
         constraints.append(labelPosition.centerYAnchor.constraint(equalTo: positionContainer.centerYAnchor))
         constraints.append(labelPosition.centerXAnchor.constraint(equalTo: positionContainer.centerXAnchor))
         
         constraints.append(labelName.centerYAnchor.constraint(equalTo: cardView.centerYAnchor))
-        constraints.append(labelName.leadingAnchor.constraint(equalTo: positionContainer.leadingAnchor, constant: 5))
+        constraints.append(labelName.trailingAnchor.constraint(equalTo: labelScore.leadingAnchor, constant: -5))
+        
         constraints.append(labelScore.centerYAnchor.constraint(equalTo: cardView.centerYAnchor))
-        constraints.append(labelScore.leadingAnchor.constraint(equalTo: labelName.trailingAnchor, constant: 5))
         constraints.append(labelScore.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -5))
         constraints.append(labelScore.widthAnchor.constraint(equalTo: labelName.widthAnchor))
         

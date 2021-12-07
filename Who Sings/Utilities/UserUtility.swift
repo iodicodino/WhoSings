@@ -32,8 +32,15 @@ class UserUtility {
     
     static func updateConnectedUser() {
         // Save last connected user
-        if let _connectedUser = _connectedUser {
-            try? UserDefaults.standard.setObject(_connectedUser, forKey: Constants.connectedUserDefaults)
+        if let updatedUser = _connectedUser {
+            try? UserDefaults.standard.setObject(updatedUser, forKey: Constants.connectedUserDefaults)
+            
+            // Update also user in storedUsers
+            if let connectedUserIndex = storedUsers.firstIndex(where: {$0.name == updatedUser.name}) {
+                _storedUsers?.remove(at: connectedUserIndex)
+                _storedUsers?.append(updatedUser)
+                try? UserDefaults.standard.setObject(_storedUsers, forKey: Constants.storedUsersDefaults)
+            }
         }
     }
     
@@ -62,6 +69,7 @@ class UserUtility {
         // Save last connected user
         var arrayToStore = storedUsers
         arrayToStore.append(user)
+        _storedUsers = arrayToStore
         try? UserDefaults.standard.setObject(arrayToStore, forKey: Constants.storedUsersDefaults)
     }
     

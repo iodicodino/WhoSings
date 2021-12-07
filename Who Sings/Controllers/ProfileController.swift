@@ -21,8 +21,9 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         let view = UIImageView(image: Constants.profileImage)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFit
-        UIUtility.addCircularCornerRadius(view)
         UIUtility.addBorder(view, withColor: Constants.purple, width: 2)
+        UIUtility.addCornerRadius(view, withRadius: 40)
+        view.layer.masksToBounds = true
         return view
     }()
     
@@ -61,10 +62,16 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         view.separatorStyle = .none
+        view.isUserInteractionEnabled = false
         return view
     }()
     
-    private let playAgainButton = SalmonButton()
+    private let playAgainButton: SalmonButton = {
+        let button = SalmonButton()
+        button.setTitle("Gioca di nuovo", for: .normal)
+        button.addTarget(self, action: #selector(buttonPlayAgain), for: .touchUpInside)
+        return button
+    }()
     
     // MARK: - Setup
     
@@ -88,7 +95,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         containerLastScore.addSubview(lastScoreTitle)
         containerLastScore.addSubview(lastScoreLabel)
         view.addSubview(tableView)
-        
+        view.addSubview(playAgainButton)
         addConstraints()
         
         // DataSource
@@ -106,8 +113,8 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         // Add
         constraints.append(imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
         constraints.append(imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
-        constraints.append(imageView.heightAnchor.constraint(equalToConstant: 50))
-        constraints.append(imageView.widthAnchor.constraint(equalToConstant: 50))
+        constraints.append(imageView.heightAnchor.constraint(equalToConstant: 80))
+        constraints.append(imageView.widthAnchor.constraint(equalToConstant: 80))
         
         constraints.append(usernameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 10))
         constraints.append(usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
@@ -129,7 +136,11 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         constraints.append(tableView.topAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.padding))
         constraints.append(tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        
+        constraints.append(playAgainButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: Constants.padding))
+        constraints.append(playAgainButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(playAgainButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(playAgainButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
         
         // Activate
         NSLayoutConstraint.activate(constraints)
@@ -167,6 +178,10 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     @objc func didTapOnChartButton() {
         let next = ScoreChartController()
         present(next, animated: true, completion: nil)
+    }
+    
+    @objc func buttonPlayAgain() {
+        
     }
 }
 

@@ -62,6 +62,7 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         // Table View
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.isUserInteractionEnabled = false
         
         addConstraints()
         
@@ -76,7 +77,7 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         constraints.append(imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
         constraints.append(imageView.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(imageView.trailingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200))
+        constraints.append(imageView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.25))
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         
         constraints.append(titleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
