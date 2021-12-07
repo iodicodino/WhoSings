@@ -15,7 +15,14 @@ class Utility {
     
     static func getRandomLineFromLyrics(_ lyrics: String) -> String {
         
-        let lineArray = lyrics.components(separatedBy: "\n")
+        var lineArray = lyrics.components(separatedBy: "\n")
+        
+        let characters = "abcdefghijklmnopqrstuvwxyz"
+        var set = CharacterSet()
+        set.insert(charactersIn: characters)
+        
+        /// Filter array not empty and with at leas one allowed character
+        lineArray = lineArray.filter({($0.isEmpty == false) && ($0.rangeOfCharacter(from: set) != nil)})
         let randomLine = lineArray.randomElement()!
         
         return randomLine

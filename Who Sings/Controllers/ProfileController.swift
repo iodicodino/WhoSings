@@ -10,6 +10,7 @@ import UIKit
 
 class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    public var delegate: ProfileControllerDelegate?
     
     private var dataSource: [Score] = []
     
@@ -63,17 +64,21 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         return view
     }()
     
+    private let playAgainButton = SalmonButton()
     
     // MARK: - Setup
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        
         view.backgroundColor = Constants.background
         
+        // Navigation
+        
+        let leftButton =  UIBarButtonItem(image: Constants.exitImage, style: .plain, target: self, action: #selector(didTapOnExitButton))
+        navigationItem.setLeftBarButton(leftButton, animated: true)
+        
+        // Subviews
         view.addSubview(imageView)
         view.addSubview(usernameLabel)
         view.addSubview(containerLastScore)
@@ -83,14 +88,11 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         
         addConstraints()
         
-        //dataSource = Constants.connectedUser?.scoreList ?? []
+        // DataSource
+        tableView.delegate = self
+        tableView.dataSource = self
         
-        let scores = [Score(points: 10, date: Date()),
-                      Score(points: 9, date: Date()),
-                      Score(points: 5, date: Date()),
-                      Score(points: 7, date: Date()),
-                      Score(points: 4, date: Date())]
-        dataSource = scores
+        dataSource = UserUtility.connectedUser?.scoreList ?? []
         
         tableView.reloadData()
     }
@@ -146,4 +148,22 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         
         return cell
     }
+    
+    // MARK: - Actions
+    
+    @objc func didTapOnExitButton() {
+        UIUtility.showConfirmationAlert(title: "Logout", message: "Sei sicuro di voler uscire?", buttonOk: "Sì", buttonClose: "No", controller: self) {
+            UserUtility.disconnectCurrentUser()
+            
+            self.dismiss(animated: true) {
+                self.delegate?.didTapOnExitButton(self)
+            }
+        }
+    }
+}
+
+protocol ProfileControllerDelegate : NSObjectProtocol {
+    
+    func didTapOnExitButton(_ sender: ProfileController)
+    
 }

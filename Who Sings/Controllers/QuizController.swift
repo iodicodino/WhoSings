@@ -30,9 +30,8 @@ class QuizController: UIViewController {
     
     // MARK: - UI Elements
     
-    private let timerLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private let timerLabel: CustomLabel = {
+        let label = CustomLabel()
         label.textColor = Constants.purple
         label.font = UIFont.boldSystemFont(ofSize: 40)
         label.textAlignment = .center
@@ -40,22 +39,25 @@ class QuizController: UIViewController {
         return label
     }()
     
-    private let cardSongView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        UIUtility.styleAsCardView(view)
-        return view
-    }()
+    private let cardSongView = CardView()
     
-    private let cardSongLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private let cardSongLabel: CustomLabel = {
+        let label = CustomLabel()
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
     
-    private let cardView = CardView()
+    private let stackCardView: UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.spacing = 10
+        view.distribution = .fillEqually
+        view.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        view.isLayoutMarginsRelativeArrangement = true
+        UIUtility.styleAsCardView(view)
+        return view
+    }()
     
     private let firstOptionButton: UIButton = {
         let button = UIButton()
@@ -65,11 +67,7 @@ class QuizController: UIViewController {
         return button
     }()
     
-    private let firstOptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let firstOptionLabel = CustomLabel()
     
     private let secondOptionButton: UIButton = {
         let button = UIButton()
@@ -79,11 +77,7 @@ class QuizController: UIViewController {
         return button
     }()
     
-    private let secondOptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let secondOptionLabel = CustomLabel()
     
     private let thirdOptionButton: UIButton = {
         let button = UIButton()
@@ -93,16 +87,10 @@ class QuizController: UIViewController {
         return button
     }()
     
-    private let thirdOptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let thirdOptionLabel = CustomLabel()
     
-    private let continueButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        UIUtility.styleAsSalmonButton(button)
+    private let continueButton: SalmonButton = {
+        let button = SalmonButton()
         button.setTitle("Conferma", for: .normal)
         button.addTarget(self, action: #selector(buttonContinue), for: .touchUpInside)
         return button
@@ -116,29 +104,38 @@ class QuizController: UIViewController {
         
         view.backgroundColor = Constants.background
         
+        // Subviews
         view.addSubview(timerLabel)
         
         view.addSubview(cardSongView)
         cardSongView.addSubview(cardSongLabel)
         
-        view.addSubview(cardView)
+        view.addSubview(stackCardView)
         
-        cardView.addSubview(firstOptionButton)
+        stackCardView.addArrangedSubview(firstOptionButton)
         firstOptionButton.addSubview(firstOptionLabel)
         
-        cardView.addSubview(secondOptionButton)
+        stackCardView.addArrangedSubview(secondOptionButton)
         secondOptionButton.addSubview(secondOptionLabel)
         
-        cardView.addSubview(thirdOptionButton)
+        stackCardView.addArrangedSubview(thirdOptionButton)
         thirdOptionButton.addSubview(thirdOptionLabel)
         
         view.addSubview(continueButton)
         
+        // Notification Center
+        NotificationCenter.default.addObserver(self, selector: #selector(adaptToRotation), name: UIDevice.orientationDidChangeNotification, object: nil)
+
+        /// Button
         continueButton.isEnabled = false
         continueButton.isUserInteractionEnabled = false
         continueButton.alpha = 0.5
         
         addConstraints()
+    }
+    
+    deinit {
+       NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -160,6 +157,9 @@ class QuizController: UIViewController {
         
         options[1].label.text = twoRandomArtists.first?.artist_name
         options[2].label.text = twoRandomArtists.last?.artist_name
+        
+        // Rotation
+        adaptToRotation()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -197,40 +197,27 @@ class QuizController: UIViewController {
         constraints.append(cardSongLabel.topAnchor.constraint(equalTo: cardSongView.topAnchor, constant: 10))
         constraints.append(cardSongLabel.bottomAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: -10))
         
-        constraints.append(cardView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
-        constraints.append(cardView.topAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: Constants.padding))
-        constraints.append(cardView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(cardView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(stackCardView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
+        constraints.append(stackCardView.topAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: Constants.padding))
+        constraints.append(stackCardView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
+        constraints.append(stackCardView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(firstOptionButton.topAnchor.constraint(equalTo: cardView.topAnchor, constant: Constants.padding))
-        constraints.append(firstOptionButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: Constants.padding))
-        constraints.append(firstOptionButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -Constants.padding))
-        constraints.append(firstOptionButton.heightAnchor.constraint(equalToConstant: 50))
+        constraints.append(firstOptionLabel.topAnchor.constraint(equalTo: firstOptionButton.topAnchor, constant: 10))
+        constraints.append(firstOptionLabel.bottomAnchor.constraint(equalTo: firstOptionButton.bottomAnchor, constant: -10))
+        constraints.append(firstOptionLabel.leadingAnchor.constraint(equalTo: firstOptionButton.leadingAnchor, constant: 15))
+        constraints.append(firstOptionLabel.trailingAnchor.constraint(equalTo: firstOptionButton.trailingAnchor, constant: -15))
         
-        constraints.append(firstOptionLabel.centerYAnchor.constraint(equalTo: firstOptionButton.centerYAnchor))
-        constraints.append(firstOptionLabel.leadingAnchor.constraint(equalTo: firstOptionButton.leadingAnchor, constant: Constants.padding))
-        constraints.append(firstOptionLabel.trailingAnchor.constraint(equalTo: firstOptionButton.trailingAnchor, constant: -Constants.padding))
+        constraints.append(secondOptionLabel.topAnchor.constraint(equalTo: secondOptionButton.topAnchor, constant: 10))
+        constraints.append(secondOptionLabel.bottomAnchor.constraint(equalTo: secondOptionButton.bottomAnchor, constant: -10))
+        constraints.append(secondOptionLabel.leadingAnchor.constraint(equalTo: secondOptionButton.leadingAnchor, constant: 15))
+        constraints.append(secondOptionLabel.trailingAnchor.constraint(equalTo: secondOptionButton.trailingAnchor, constant: -15))
         
-        constraints.append(secondOptionButton.topAnchor.constraint(equalTo: firstOptionButton.bottomAnchor, constant: 10))
-        constraints.append(secondOptionButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: Constants.padding))
-        constraints.append(secondOptionButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -Constants.padding))
-        constraints.append(secondOptionButton.heightAnchor.constraint(equalToConstant: 50))
+        constraints.append(thirdOptionLabel.topAnchor.constraint(equalTo: thirdOptionButton.topAnchor, constant: 10))
+        constraints.append(thirdOptionLabel.bottomAnchor.constraint(equalTo: thirdOptionButton.bottomAnchor, constant: -10))
+        constraints.append(thirdOptionLabel.leadingAnchor.constraint(equalTo: thirdOptionButton.leadingAnchor, constant: 15))
+        constraints.append(thirdOptionLabel.trailingAnchor.constraint(equalTo: thirdOptionButton.trailingAnchor, constant: -15))
         
-        constraints.append(secondOptionLabel.centerYAnchor.constraint(equalTo: secondOptionButton.centerYAnchor))
-        constraints.append(secondOptionLabel.leadingAnchor.constraint(equalTo: secondOptionButton.leadingAnchor, constant: Constants.padding))
-        constraints.append(secondOptionLabel.trailingAnchor.constraint(equalTo: secondOptionButton.trailingAnchor, constant: -Constants.padding))
-        
-        constraints.append(thirdOptionButton.topAnchor.constraint(equalTo: secondOptionButton.bottomAnchor, constant: 10))
-        constraints.append(thirdOptionButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: Constants.padding))
-        constraints.append(thirdOptionButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -Constants.padding))
-        constraints.append(thirdOptionButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -Constants.padding))
-        constraints.append(thirdOptionButton.heightAnchor.constraint(equalToConstant: 50))
-        
-        constraints.append(thirdOptionLabel.centerYAnchor.constraint(equalTo: thirdOptionButton.centerYAnchor))
-        constraints.append(thirdOptionLabel.leadingAnchor.constraint(equalTo: thirdOptionButton.leadingAnchor, constant: Constants.padding))
-        constraints.append(thirdOptionLabel.trailingAnchor.constraint(equalTo: thirdOptionButton.trailingAnchor, constant: -Constants.padding))
-        
-        constraints.append(continueButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: Constants.padding))
+        constraints.append(continueButton.topAnchor.constraint(equalTo: stackCardView.bottomAnchor, constant: Constants.padding))
         constraints.append(continueButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(continueButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         constraints.append(continueButton.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
@@ -238,6 +225,39 @@ class QuizController: UIViewController {
         
         // Activate
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    // MARK: - Private functions
+    
+    @objc func adaptToRotation() {
+        let orientation = UIDevice.current.orientation
+        
+        switch orientation {
+        case .portrait:
+            fallthrough
+        case .portraitUpsideDown:
+            stackCardView.axis = .vertical
+        case .landscapeLeft:
+            fallthrough
+        case .landscapeRight:
+            stackCardView.axis = .horizontal
+        case .faceUp:
+            fallthrough
+        case .faceDown:
+            fallthrough
+        case .unknown:
+            fallthrough
+        @unknown default:
+            if view.frame.width > view.frame.height {
+                // Landscape
+                stackCardView.axis = .horizontal
+            } else {
+                // Portrait
+                stackCardView.axis = .vertical
+            }
+        }
+        
+        view.layoutIfNeeded()
     }
     
     private func styleButtonAsSelected(_ button: UIButton, _ label: UILabel, selected: Bool) {

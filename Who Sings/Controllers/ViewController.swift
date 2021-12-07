@@ -10,28 +10,28 @@ import UIKit
 import MBProgressHUD
 
 
-class ViewController: UIViewController, LoginControllerDelegate, QuizControllerDelegate {
+class ViewController: UIViewController, LoginControllerDelegate, QuizControllerDelegate, ProfileControllerDelegate {
     
+    private var isFirstSetup: Bool = false
     
     // MARK: - Setup
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        isFirstSetup = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if UserUtility.connectedUser == nil {
-            let next = LoginController()
-            next.modalPresentationStyle = .fullScreen
-            next.delegate = self
-            present(next, animated: true, completion: nil)
-        } else {
-            let next = ProfileController()
-            next.modalPresentationStyle = .fullScreen
-            present(next, animated: true, completion: nil)
+        if isFirstSetup {
+            isFirstSetup = false
+            
+            if UserUtility.connectedUser == nil {
+                goToLogin()
+            } else {
+                goToProfile()
+            }
         }
     }
     
@@ -73,6 +73,20 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
         }
     }
     
+    private func goToLogin() {
+        let next = LoginController()
+        next.modalPresentationStyle = .fullScreen
+        next.delegate = self
+        present(next, animated: true, completion: nil)
+    }
+    
+    private func goToProfile() {
+        let next = ProfileController()
+        next.delegate = self
+        let navigation = UINavigationController(rootViewController: next)
+        navigation.modalPresentationStyle = .fullScreen
+        present(navigation, animated: true, completion: nil)
+    }
     
     // MARK: - LoginController Delegate
     
@@ -84,13 +98,17 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
     // MARK: - QuizController Delegate
     
     func didEndGame(_ sender: QuizController) {
-        let next = ProfileController()
-        next.modalPresentationStyle = .fullScreen
-        present(next, animated: true, completion: nil)
+        goToProfile()
     }
     
     func didRepeatGame(_ sender: QuizController) {
         startQuiz()
+    }
+    
+    // MARK: - ProfileControllerDelegate
+    
+    func didTapOnExitButton(_ sender: ProfileController) {
+        goToLogin()
     }
     
 }

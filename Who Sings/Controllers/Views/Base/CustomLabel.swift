@@ -14,12 +14,14 @@ class CustomLabel: UILabel {
     {
         super.init(coder: coder)
         translatesAutoresizingMaskIntoConstraints = false
+        numberOfLines = 0
     }
     
     public override init(frame: CGRect)
     {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
+        numberOfLines = 0
     }
     
 }

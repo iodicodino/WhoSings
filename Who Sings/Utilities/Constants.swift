@@ -37,4 +37,5 @@ class Constants {
     
     static var questionMarkImage = UIImage(named: "question-mark")
     static var profileImage = UIImage(named: "brain")
+    static var exitImage = UIImage(systemName: "rectangle.portrait.and.arrow.right")
 }

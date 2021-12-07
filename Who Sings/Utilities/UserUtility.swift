@@ -37,6 +37,7 @@ class UserUtility {
     }
     
     static func disconnectCurrentUser() {
+        _connectedUser = nil
         UserDefaults.standard.set(nil, forKey: Constants.connectedUserDefaults)
     }
     
