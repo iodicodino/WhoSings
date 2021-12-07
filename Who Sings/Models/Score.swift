@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Score: Decodable, Encodable {
+class Score: Codable {
     
     init(points: Int, date: Date) {
         self.points = points

@@ -329,6 +329,7 @@ class QuizController: UIViewController {
             // Save total score
             let totalScore = Score(points: Utility.currentScore, date: Date())
             UserUtility.connectedUser?.scoreList.append(totalScore)
+            UserUtility.updateConnectedUser()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 UIUtility.showSimpleAlert(title: "Hai perso!", message: "Vai al tuo risultato!", button: "Vai!", controller: self) {

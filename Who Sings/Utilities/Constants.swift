@@ -17,6 +17,7 @@ class Constants {
     // MARK: - User defaults
     
     static var connectedUserDefaults: String { return "connectedUser" }
+    static var storedUsersDefaults: String { return "storedUsers" }
     
     // MARK: - UI
     
@@ -37,5 +38,7 @@ class Constants {
     
     static var questionMarkImage = UIImage(named: "question-mark")
     static var profileImage = UIImage(named: "brain")
+    static var scoreChartImage = UIImage(named: "podium")
     static var exitImage = UIImage(systemName: "rectangle.portrait.and.arrow.right")
+    static var crownImage = UIImage(systemName: "crown")
 }

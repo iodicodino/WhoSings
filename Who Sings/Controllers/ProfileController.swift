@@ -78,6 +78,9 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         let leftButton =  UIBarButtonItem(image: Constants.exitImage, style: .plain, target: self, action: #selector(didTapOnExitButton))
         navigationItem.setLeftBarButton(leftButton, animated: true)
         
+        let rightButton =  UIBarButtonItem(image: Constants.crownImage, style: .plain, target: self, action: #selector(didTapOnChartButton))
+        navigationItem.setRightBarButton(rightButton, animated: true)
+        
         // Subviews
         view.addSubview(imageView)
         view.addSubview(usernameLabel)
@@ -159,6 +162,11 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
                 self.delegate?.didTapOnExitButton(self)
             }
         }
+    }
+    
+    @objc func didTapOnChartButton() {
+        let next = ScoreChartController()
+        present(next, animated: true, completion: nil)
     }
 }
 
