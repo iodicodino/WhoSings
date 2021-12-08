@@ -41,9 +41,9 @@ extension User {
     
     var bestScore: Score? {
         // Take best and most recent score
-        if let max = scoreList.max(by: {$0.points > $1.points}) {
+        if let max = scoreList.max(by: {$0.points < $1.points}) {
             let maxScores = scoreList.filter({$0.points == max.points})
-            return maxScores.max(by: {$0.date > $1.date})
+            return maxScores.max(by: {$0.date < $1.date})
         }
         
         return nil

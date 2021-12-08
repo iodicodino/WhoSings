@@ -111,4 +111,7 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
         goToLogin()
     }
     
+    func didTapOnPlayAgain(_ sender: ProfileController) {
+        startQuiz()
+    }
 }

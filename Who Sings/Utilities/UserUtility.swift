@@ -26,21 +26,20 @@ class UserUtility {
     static func setConnectedUser(_ user: User) {
         // Save last connected user
         _connectedUser = user
-        addUserToStored(user)
         try? UserDefaults.standard.setObject(user, forKey: Constants.connectedUserDefaults)
     }
     
     static func updateConnectedUser() {
         // Save last connected user
         if let updatedUser = _connectedUser {
-            try? UserDefaults.standard.setObject(updatedUser, forKey: Constants.connectedUserDefaults)
-            
             // Update also user in storedUsers
             if let connectedUserIndex = storedUsers.firstIndex(where: {$0.name == updatedUser.name}) {
                 _storedUsers?.remove(at: connectedUserIndex)
                 _storedUsers?.append(updatedUser)
                 try? UserDefaults.standard.setObject(_storedUsers, forKey: Constants.storedUsersDefaults)
             }
+            
+            try? UserDefaults.standard.setObject(updatedUser, forKey: Constants.connectedUserDefaults)
         }
     }
     
@@ -49,6 +48,9 @@ class UserUtility {
         UserDefaults.standard.set(nil, forKey: Constants.connectedUserDefaults)
     }
     
+    static func checkUsernameAvailable(_ username: String) -> Bool {
+        return !storedUsers.contains(where: {$0.name == username})
+    }
     
     // MARK: - Stored users
     

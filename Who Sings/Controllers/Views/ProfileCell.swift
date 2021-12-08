@@ -60,7 +60,7 @@ class ProfileCell: UITableViewCell {
         labelScore.font = UIFont.boldSystemFont(ofSize: 16)
         labelDate.font = UIFont.systemFont(ofSize: 12)
         labelDate.textColor = .black
-        labelScore.textColor = .black
+        labelScore.textColor = Constants.purple
     }
     
     public func setupWithAsBestScore(_ score: Score) {

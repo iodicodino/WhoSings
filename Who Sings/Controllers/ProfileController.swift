@@ -21,9 +21,6 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         let view = UIImageView(image: Constants.profileImage)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFit
-        UIUtility.addBorder(view, withColor: Constants.purple, width: 2)
-        UIUtility.addCornerRadius(view, withRadius: 40)
-        view.layer.masksToBounds = true
         return view
     }()
     
@@ -32,7 +29,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = UserUtility.connectedUser?.name ?? "Provolone"
+        label.text = UserUtility.connectedUser?.name
         return label
     }()
     
@@ -43,7 +40,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textAlignment = .right
         label.numberOfLines = 0
-        label.text = "Ultimo punteggio:"
+        label.text = "profileController.label.lastScore".localized
         return label
     }()
     
@@ -53,7 +50,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         label.textAlignment = .left
         label.numberOfLines = 0
         label.textColor = Constants.salmon
-        label.text = UserUtility.connectedUser?.scoreList.last?.pointsString ?? "0pt"
+        label.text = UserUtility.connectedUser?.scoreList.last?.pointsString ?? "0 pt"
         return label
     }()
     
@@ -62,13 +59,12 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         view.separatorStyle = .none
-        view.isUserInteractionEnabled = false
         return view
     }()
     
     private let playAgainButton: SalmonButton = {
         let button = SalmonButton()
-        button.setTitle("Gioca di nuovo", for: .normal)
+        button.setTitle("profileController.button.playAgain".localized, for: .normal)
         button.addTarget(self, action: #selector(buttonPlayAgain), for: .touchUpInside)
         return button
     }()
@@ -102,7 +98,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.delegate = self
         tableView.dataSource = self
         
-        dataSource = UserUtility.connectedUser?.scoreList ?? []
+        dataSource = UserUtility.connectedUser?.scoreList.reversed() ?? []
         
         tableView.reloadData()
     }
@@ -113,10 +109,10 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         // Add
         constraints.append(imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
         constraints.append(imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
-        constraints.append(imageView.heightAnchor.constraint(equalToConstant: 80))
-        constraints.append(imageView.widthAnchor.constraint(equalToConstant: 80))
+        constraints.append(imageView.heightAnchor.constraint(equalToConstant: 100))
+        constraints.append(imageView.widthAnchor.constraint(equalToConstant: 100))
         
-        constraints.append(usernameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 10))
+        constraints.append(usernameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: Constants.padding))
         constraints.append(usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(usernameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
@@ -141,6 +137,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         constraints.append(playAgainButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(playAgainButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         constraints.append(playAgainButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        constraints.append(playAgainButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight))
         
         // Activate
         NSLayoutConstraint.activate(constraints)
@@ -155,6 +152,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = ProfileCell()
+        cell.selectionStyle = .none
         cell.awakeFromNib()
         
         let currentScore = dataSource[indexPath.row]
@@ -166,7 +164,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     // MARK: - Actions
     
     @objc func didTapOnExitButton() {
-        UIUtility.showConfirmationAlert(title: "Logout", message: "Sei sicuro di voler uscire?", buttonOk: "Sì", buttonClose: "No", controller: self) {
+        UIUtility.showConfirmationAlert(title: "alert.title.logout", message: "alert.message.logout", buttonOk: "title.yes", buttonClose: "title.no", controller: self) {
             UserUtility.disconnectCurrentUser()
             
             self.dismiss(animated: true) {
@@ -181,12 +179,14 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     @objc func buttonPlayAgain() {
-        
+        self.dismiss(animated: true) {
+            self.delegate?.didTapOnPlayAgain(self)
+        }
     }
 }
 
 protocol ProfileControllerDelegate : NSObjectProtocol {
     
     func didTapOnExitButton(_ sender: ProfileController)
-    
+    func didTapOnPlayAgain(_ sender: ProfileController)
 }

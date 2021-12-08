@@ -35,7 +35,7 @@ class QuizController: UIViewController {
         label.textColor = Constants.purple
         label.font = UIFont.boldSystemFont(ofSize: 40)
         label.textAlignment = .center
-        label.text = "10s"
+        label.text = "\(Constants.timePerQuestion)s"
         return label
     }()
     
@@ -91,7 +91,7 @@ class QuizController: UIViewController {
     
     private let continueButton: SalmonButton = {
         let button = SalmonButton()
-        button.setTitle("Conferma", for: .normal)
+        button.setTitle("title.confirm".localized, for: .normal)
         button.addTarget(self, action: #selector(buttonContinue), for: .touchUpInside)
         return button
     }()
@@ -149,7 +149,7 @@ class QuizController: UIViewController {
         
         options.shuffle()
         
-        let twoRandomArtists = Utility.artists.choose(2)
+        let twoRandomArtists = Utility.filteredArtists(number: 2, withoutId: track.artist_id)
         
         options[0].label.text = track.artist_name
         options[0].isRight = true
@@ -165,7 +165,7 @@ class QuizController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        var counter = 10
+        var counter = Constants.timePerQuestion
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
             [weak self] timer in
@@ -174,6 +174,8 @@ class QuizController: UIViewController {
             self?.timerLabel.text = String(counter) + "s"
             if counter == 0 {
                 timer.invalidate()
+                
+                self?.buttonContinue()
             }
         }
     }
@@ -202,18 +204,18 @@ class QuizController: UIViewController {
         constraints.append(stackCardView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(stackCardView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(firstOptionLabel.topAnchor.constraint(equalTo: firstOptionButton.topAnchor, constant: 10))
-        constraints.append(firstOptionLabel.bottomAnchor.constraint(equalTo: firstOptionButton.bottomAnchor, constant: -10))
+        constraints.append(firstOptionLabel.topAnchor.constraint(equalTo: firstOptionButton.topAnchor, constant: 15))
+        constraints.append(firstOptionLabel.bottomAnchor.constraint(equalTo: firstOptionButton.bottomAnchor, constant: -15))
         constraints.append(firstOptionLabel.leadingAnchor.constraint(equalTo: firstOptionButton.leadingAnchor, constant: 15))
         constraints.append(firstOptionLabel.trailingAnchor.constraint(equalTo: firstOptionButton.trailingAnchor, constant: -15))
         
-        constraints.append(secondOptionLabel.topAnchor.constraint(equalTo: secondOptionButton.topAnchor, constant: 10))
-        constraints.append(secondOptionLabel.bottomAnchor.constraint(equalTo: secondOptionButton.bottomAnchor, constant: -10))
+        constraints.append(secondOptionLabel.topAnchor.constraint(equalTo: secondOptionButton.topAnchor, constant: 15))
+        constraints.append(secondOptionLabel.bottomAnchor.constraint(equalTo: secondOptionButton.bottomAnchor, constant: -15))
         constraints.append(secondOptionLabel.leadingAnchor.constraint(equalTo: secondOptionButton.leadingAnchor, constant: 15))
         constraints.append(secondOptionLabel.trailingAnchor.constraint(equalTo: secondOptionButton.trailingAnchor, constant: -15))
         
-        constraints.append(thirdOptionLabel.topAnchor.constraint(equalTo: thirdOptionButton.topAnchor, constant: 10))
-        constraints.append(thirdOptionLabel.bottomAnchor.constraint(equalTo: thirdOptionButton.bottomAnchor, constant: -10))
+        constraints.append(thirdOptionLabel.topAnchor.constraint(equalTo: thirdOptionButton.topAnchor, constant: 15))
+        constraints.append(thirdOptionLabel.bottomAnchor.constraint(equalTo: thirdOptionButton.bottomAnchor, constant: -15))
         constraints.append(thirdOptionLabel.leadingAnchor.constraint(equalTo: thirdOptionButton.leadingAnchor, constant: 15))
         constraints.append(thirdOptionLabel.trailingAnchor.constraint(equalTo: thirdOptionButton.trailingAnchor, constant: -15))
         
@@ -294,6 +296,12 @@ class QuizController: UIViewController {
     
     private func checkCorrectAnswer() -> Bool {
         guard let selectedButton = selectedButton else {
+            // No selected button, time ended up
+            styleButtonAsCorrect(correctOption.button, correct: true)
+            // Reveal all the options
+            let wrongOptions = options.filter({!$0.isRight})
+            styleButtonAsCorrect(wrongOptions.first!.button, correct: false)
+            styleButtonAsCorrect(wrongOptions.last!.button, correct: false)
             return false
         }
         
@@ -328,11 +336,12 @@ class QuizController: UIViewController {
         } else {
             // Save total score
             let totalScore = Score(points: Utility.currentScore, date: Date())
+            Utility.currentScore = 0 // Reset current score
             UserUtility.connectedUser?.scoreList.append(totalScore)
             UserUtility.updateConnectedUser()
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                UIUtility.showSimpleAlert(title: "Hai perso!", message: "Vai al tuo risultato!", button: "Vai!", controller: self) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                UIUtility.showSimpleAlert(title: "alert.title.gameLost", message: "alert.message.gameLost", button: "alert.button.gameLost", controller: self) {
                     self.dismiss(animated: true) {
                         self.delegate?.didEndGame(self)
                     }

@@ -1,0 +1,45 @@
+/* 
+  Localizables.strings
+  Who Sings
+
+  Created by Francesca Piccoli on 08/12/21.
+  
+*/
+
+"title.confirm" = "Confirma";
+"title.yes" = "Sì";
+"title.no" = "No";
+
+// MARK: - Alert
+
+"alert.title.userNotAvailable" = "Username occupato";
+"alert.message.userNotAvailable" = "Esiste già un utente associato a questo nome. Desideri accedere con questo utente? Altrimenti scegline un altro.";
+"alert.yesButton.userNotAvailable" = "Sì, accedo con questo";
+"alert.noButton.userNotAbailable" = "No, ne scelgo un altro";
+
+"alert.title.gameLost" = "Hai perso!";
+"alert.message.gameLost" = "Vai al tuo risultato!";
+"alert.button.gameLost" = "Vai!";
+
+"alert.title.logout" = "Logout";
+"alert.message.logout" = "Sei sicuro di voler uscire?";
+
+
+// MARK: - Login
+
+"loginController.startButton" = "Sono pronto. Vai!";
+"loginController.label.title" = "Benvenuto su Who Sings!";
+"loginController.label.message" = "Inserisci il tuo nickname per giocare";
+"loginController.textField.placeholder" = "Inserisci il tuo nickname";
+
+
+// MARK: - Chart
+
+"chartController.label.title" = "La classifica di Who Sings!";
+"chartController.label.message" = "Ecco la classifica dei nostri giocatori";
+
+
+// MARK: - Profile
+
+"profileController.button.playAgain" = "Gioca di nuovo";
+"profileController.label.lastScore" = "Ultimo punteggio:";

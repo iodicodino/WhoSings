@@ -13,6 +13,7 @@ class Constants {
     // MARK: - General
     
     static var pointsPerCorrectAnswer: Int { return 10 }
+    static var timePerQuestion: Int { return 15 }
     
     // MARK: - User defaults
     
@@ -41,4 +42,5 @@ class Constants {
     static var scoreChartImage = UIImage(named: "podium")
     static var exitImage = UIImage(systemName: "rectangle.portrait.and.arrow.right")
     static var crownImage = UIImage(systemName: "crown")
+    static var closeImage = UIImage(systemName: "xmark")
 }

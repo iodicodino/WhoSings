@@ -15,6 +15,17 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // MARK: - UI Elements
     
+    private let buttonClose: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(Constants.closeImage, for: .normal)
+        button.addTarget(self, action: #selector(buttonCloseTapped), for: .touchUpInside)
+        button.tintColor = .black
+        button.contentVerticalAlignment = .fill
+        button.contentHorizontalAlignment = .fill
+        return button
+    }()
+    
     private let imageView: UIImageView = {
         let view = UIImageView(image: Constants.scoreChartImage)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +37,7 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         let label = CustomLabel()
         label.font = UIFont.boldSystemFont(ofSize: 24)
         label.textAlignment = .center
-        label.text = "La classifica di Who Sings!"
+        label.text = "chartController.label.title".localized
         return label
     }()
     
@@ -34,7 +45,7 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         let label = CustomLabel()
         label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         label.textAlignment = .center
-        label.text = "Ecco i giocatori che hanno effettuato un maggior punteggio"
+        label.text = "chartController.label.message".localized
         return label
     }()
     
@@ -54,6 +65,7 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         
         view.backgroundColor = Constants.background
         
+        view.addSubview(buttonClose)
         view.addSubview(imageView)
         view.addSubview(titleLabel)
         view.addSubview(messageLabel)
@@ -62,7 +74,6 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
         // Table View
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.isUserInteractionEnabled = false
         
         addConstraints()
         
@@ -73,6 +84,11 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
     private func addConstraints() {
         var constraints = [NSLayoutConstraint]()
         // Add
+        constraints.append(buttonClose.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
+        constraints.append(buttonClose.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(buttonClose.heightAnchor.constraint(equalToConstant: 20))
+        constraints.append(buttonClose.widthAnchor.constraint(equalToConstant: 22))
+        
         constraints.append(imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
         constraints.append(imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
         constraints.append(imageView.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
@@ -117,10 +133,17 @@ class ScoreChartController: UIViewController, UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UserChartCell()
         cell.awakeFromNib()
+        cell.selectionStyle = .none
         
         let currentUser = dataSource[indexPath.row]
         cell.setupWithUser(currentUser, position: indexPath.row + 1)
         
         return cell
+    }
+    
+    // MARK: - Actions
+    
+    @objc func buttonCloseTapped() {
+        self.dismiss(animated: true, completion: nil)
     }
 }

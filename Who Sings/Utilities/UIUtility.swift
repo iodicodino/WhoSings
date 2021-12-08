@@ -100,8 +100,8 @@ class UIUtility {
     // MARK: - Alerts
     
     static func showSimpleAlert(title: String, message: String, button: String, controller: UIViewController, completion: EmptyCompletion?) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: button, style: .cancel, handler: { action in
+        let alert = UIAlertController(title: title.localized, message: message.localized, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: button.localized, style: .cancel, handler: { action in
             completion?()
         }))
         
@@ -109,11 +109,12 @@ class UIUtility {
     }
     
     static func showConfirmationAlert(title: String, message: String, buttonOk: String, buttonClose: String, controller: UIViewController, completion: EmptyCompletion?) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: buttonOk, style: .default, handler: { action in
+        
+        let alert = UIAlertController(title: title.localized, message: message.localized, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: buttonOk.localized, style: .default, handler: { action in
             completion?()
         }))
-        alert.addAction(UIAlertAction.init(title: buttonClose, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction.init(title: buttonClose.localized, style: .cancel, handler: nil))
         
         controller.present(alert, animated: true, completion: nil)
     }
@@ -163,4 +164,12 @@ extension UITextField {
         self.rightView = paddingView
         self.rightViewMode = .always
     }
+}
+
+extension String {
+    
+    var localized: String {
+        return NSLocalizedString(self, comment: "")
+    }
+    
 }

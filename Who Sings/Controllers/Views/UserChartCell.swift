@@ -38,6 +38,9 @@ class UserChartCell: UITableViewCell {
     
     private func setupLabels() {
         labelPosition.textAlignment = .center
+        labelPosition.textColor = Constants.purple
+        labelPosition.font = UIFont.boldSystemFont(ofSize: 12)
+        
         labelScore.textAlignment = .center
         labelName.textAlignment = .center
     }
