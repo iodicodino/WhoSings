@@ -51,9 +51,9 @@ class QuizController: UIViewController {
     private let stackCardView: UIStackView = {
         let view = UIStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.spacing = 10
+        view.spacing = Constants.inset
         view.distribution = .fillEqually
-        view.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        view.layoutMargins = UIEdgeInsets(top: Constants.inset, left: Constants.inset, bottom: Constants.inset, right: Constants.inset)
         view.isLayoutMarginsRelativeArrangement = true
         UIUtility.styleAsCardView(view)
         return view
@@ -196,11 +196,11 @@ class QuizController: UIViewController {
         
         constraints.append(cardSongLabel.leadingAnchor.constraint(equalTo: cardSongView.leadingAnchor, constant: Constants.padding))
         constraints.append(cardSongLabel.trailingAnchor.constraint(equalTo: cardSongView.trailingAnchor, constant: -Constants.padding))
-        constraints.append(cardSongLabel.topAnchor.constraint(equalTo: cardSongView.topAnchor, constant: 10))
-        constraints.append(cardSongLabel.bottomAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: -10))
+        constraints.append(cardSongLabel.topAnchor.constraint(equalTo: cardSongView.topAnchor, constant: Constants.inset))
+        constraints.append(cardSongLabel.bottomAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: -Constants.inset))
         
         constraints.append(stackCardView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
-        constraints.append(stackCardView.topAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: Constants.padding))
+        constraints.append(stackCardView.topAnchor.constraint(equalTo: cardSongView.bottomAnchor, constant: Constants.inset))
         constraints.append(stackCardView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
         constraints.append(stackCardView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
         
@@ -274,9 +274,9 @@ class QuizController: UIViewController {
     
     private func styleButtonAsCorrect(_ button: UIButton, correct: Bool) {
         if correct {
-            button.backgroundColor = .green
+            button.backgroundColor = Constants.green
         } else {
-            button.backgroundColor = .red
+            button.backgroundColor = Constants.red
         }
         
         for subview in button.subviews {

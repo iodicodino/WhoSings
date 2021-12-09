@@ -17,6 +17,15 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     
     // MARK: - UI Elements
     
+    let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    let contentView = CustomView()
+    
     private let imageView: UIImageView = {
         let view = UIImageView(image: Constants.profileImage)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +35,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     
     private let usernameLabel: CustomLabel = {
         let label = CustomLabel()
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 26)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.text = UserUtility.connectedUser?.name
@@ -34,11 +43,12 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     }()
     
     private let containerLastScore = CustomView()
+    private let containerBestScore = CustomView()
     
     private let lastScoreTitle: CustomLabel = {
         let label = CustomLabel()
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textAlignment = .right
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textAlignment = .left
         label.numberOfLines = 0
         label.text = "profileController.label.lastScore".localized
         return label
@@ -54,11 +64,40 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         return label
     }()
     
+    private let bestScoreTitle: CustomLabel = {
+        let label = CustomLabel()
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.text = "profileController.label.bestScore".localized
+        return label
+    }()
+    
+    private let bestScoreLabel: CustomLabel = {
+        let label = CustomLabel()
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.textColor = Constants.salmon
+        label.text = UserUtility.connectedUser?.bestScore?.pointsString ?? "0 pt"
+        return label
+    }()
+    
+    private let labelTableViewTitle: CustomLabel = {
+        let label = CustomLabel()
+        label.font = UIFont.boldSystemFont(ofSize: 26)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.text = "profileController.label.titleTableView".localized
+        return label
+    }()
+    
     private let tableView: UITableView = {
         let view = UITableView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         view.separatorStyle = .none
+        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -75,6 +114,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         super.viewDidLoad()
         
         view.backgroundColor = Constants.background
+        navigationItem.title = "title.profile".localized
         
         // Navigation
         
@@ -85,13 +125,19 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         navigationItem.setRightBarButton(rightButton, animated: true)
         
         // Subviews
-        view.addSubview(imageView)
-        view.addSubview(usernameLabel)
-        view.addSubview(containerLastScore)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(imageView)
+        contentView.addSubview(usernameLabel)
+        contentView.addSubview(containerLastScore)
+        contentView.addSubview(containerBestScore)
         containerLastScore.addSubview(lastScoreTitle)
         containerLastScore.addSubview(lastScoreLabel)
-        view.addSubview(tableView)
-        view.addSubview(playAgainButton)
+        containerBestScore.addSubview(bestScoreTitle)
+        containerBestScore.addSubview(bestScoreLabel)
+        contentView.addSubview(tableView)
+        contentView.addSubview(playAgainButton)
+        contentView.addSubview(labelTableViewTitle)
         addConstraints()
         
         // DataSource
@@ -99,6 +145,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.dataSource = self
         
         dataSource = UserUtility.connectedUser?.scoreList.reversed() ?? []
+        tableView.heightAnchor.constraint(equalToConstant: CGFloat(dataSource.count * 60)).isActive = true
         
         tableView.reloadData()
     }
@@ -107,37 +154,67 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     private func addConstraints() {
         var constraints = [NSLayoutConstraint]()
         // Add
-        constraints.append(imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor))
-        constraints.append(imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.padding))
+        
+        constraints.append(scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor))
+        constraints.append(scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor))
+        constraints.append(scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor))
+        constraints.append(scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor))
+        
+        constraints.append(contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor))
+        constraints.append(contentView.topAnchor.constraint(equalTo: scrollView.topAnchor))
+        constraints.append(contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor))
+        constraints.append(contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor))
+        constraints.append(contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor))
+        
+        constraints.append(imageView.centerXAnchor.constraint(equalTo:contentView.centerXAnchor))
+        constraints.append(imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.padding))
         constraints.append(imageView.heightAnchor.constraint(equalToConstant: 100))
         constraints.append(imageView.widthAnchor.constraint(equalToConstant: 100))
         
         constraints.append(usernameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: Constants.padding))
-        constraints.append(usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(usernameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(usernameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(containerLastScore.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 10))
-        constraints.append(containerLastScore.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(containerLastScore.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(containerLastScore.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: Constants.inset))
+        constraints.append(containerLastScore.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(containerLastScore.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
         
-        constraints.append(lastScoreTitle.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: 10))
-        constraints.append(lastScoreTitle.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: 10))
-        constraints.append(lastScoreTitle.leadingAnchor.constraint(equalTo: containerLastScore.leadingAnchor, constant: 10))
-        constraints.append(lastScoreLabel.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: 10))
-        constraints.append(lastScoreLabel.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: 10))
-        constraints.append(lastScoreLabel.leadingAnchor.constraint(equalTo: lastScoreTitle.trailingAnchor, constant: 10))
-        constraints.append(lastScoreLabel.trailingAnchor.constraint(equalTo: containerLastScore.trailingAnchor, constant: -10))
+        constraints.append(containerBestScore.topAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.inset))
+        constraints.append(containerBestScore.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(containerBestScore.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
+        
+        constraints.append(lastScoreTitle.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: Constants.inset))
+        constraints.append(lastScoreTitle.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.inset))
+        constraints.append(lastScoreTitle.leadingAnchor.constraint(equalTo: containerLastScore.leadingAnchor, constant: Constants.inset))
+        constraints.append(lastScoreLabel.topAnchor.constraint(equalTo: containerLastScore.topAnchor, constant: Constants.inset))
+        constraints.append(lastScoreLabel.bottomAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.inset))
+        constraints.append(lastScoreLabel.leadingAnchor.constraint(equalTo: lastScoreTitle.trailingAnchor, constant: Constants.inset))
+        constraints.append(lastScoreLabel.trailingAnchor.constraint(equalTo: containerLastScore.trailingAnchor, constant: -Constants.inset))
         constraints.append(lastScoreLabel.widthAnchor.constraint(equalTo: lastScoreTitle.widthAnchor))
         
-        constraints.append(tableView.topAnchor.constraint(equalTo: containerLastScore.bottomAnchor, constant: Constants.padding))
-        constraints.append(tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
+        constraints.append(bestScoreTitle.topAnchor.constraint(equalTo: containerBestScore.topAnchor, constant: Constants.inset))
+        constraints.append(bestScoreTitle.bottomAnchor.constraint(equalTo: containerBestScore.bottomAnchor, constant: Constants.inset))
+        constraints.append(bestScoreTitle.leadingAnchor.constraint(equalTo: containerBestScore.leadingAnchor, constant: Constants.inset))
+        constraints.append(bestScoreLabel.topAnchor.constraint(equalTo: containerBestScore.topAnchor, constant: Constants.inset))
+        constraints.append(bestScoreLabel.bottomAnchor.constraint(equalTo: containerBestScore.bottomAnchor, constant: Constants.inset))
+        constraints.append(bestScoreLabel.leadingAnchor.constraint(equalTo: bestScoreTitle.trailingAnchor, constant: Constants.inset))
+        constraints.append(bestScoreLabel.trailingAnchor.constraint(equalTo: containerBestScore.trailingAnchor, constant: -Constants.inset))
+        constraints.append(bestScoreLabel.widthAnchor.constraint(equalTo: bestScoreTitle.widthAnchor))
         
-        constraints.append(playAgainButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: Constants.padding))
-        constraints.append(playAgainButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.padding))
-        constraints.append(playAgainButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -Constants.padding))
-        constraints.append(playAgainButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.padding))
+        constraints.append(playAgainButton.topAnchor.constraint(equalTo: containerBestScore.bottomAnchor, constant: 50))
+        constraints.append(playAgainButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(playAgainButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
         constraints.append(playAgainButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight))
+        
+        constraints.append(labelTableViewTitle.topAnchor.constraint(equalTo: playAgainButton.bottomAnchor, constant: Constants.padding))
+        constraints.append(labelTableViewTitle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(labelTableViewTitle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
+        
+        constraints.append(tableView.topAnchor.constraint(equalTo: labelTableViewTitle.bottomAnchor, constant: Constants.padding))
+        constraints.append(tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.padding))
+        constraints.append(tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.padding))
+        constraints.append(tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.padding))
+        
         
         // Activate
         NSLayoutConstraint.activate(constraints)

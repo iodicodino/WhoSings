@@ -40,7 +40,7 @@ class Score: Codable {
 
 extension Score {
     var pointsString: String {
-        return String(points) + "pt"
+        return String(points) + " pt"
     }
     
     var dateString: String {

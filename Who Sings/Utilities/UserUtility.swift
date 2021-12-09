@@ -84,6 +84,11 @@ class UserUtility {
             return firstPoints > secondPoints
         }
     }
+    
+    static func getUserFromStored(_ user: User) -> User? {
+        let storedUser = storedUsers.filter({$0.name == user.name}).first
+        return storedUser
+    }
 }
 
 extension UserDefaults: ObjectSavable {

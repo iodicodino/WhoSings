@@ -6,9 +6,11 @@
   
 */
 
-"title.confirm" = "Confirma";
+"title.confirm" = "Conferma";
 "title.yes" = "Sì";
 "title.no" = "No";
+"title.ok" = "Ok";
+"title.profile" = "Profilo";
 
 // MARK: - Alert
 
@@ -24,6 +26,8 @@
 "alert.title.logout" = "Logout";
 "alert.message.logout" = "Sei sicuro di voler uscire?";
 
+"alert.title.connectionError" = "Oops!";
+"alert.message.connectionError" = "Qualcosa è andato storto";
 
 // MARK: - Login
 
@@ -43,3 +47,5 @@
 
 "profileController.button.playAgain" = "Gioca di nuovo";
 "profileController.label.lastScore" = "Ultimo punteggio:";
+"profileController.label.bestScore" = "Miglior punteggio:";
+"profileController.label.titleTableView" = "Il tuo storico punteggi";

@@ -9,6 +9,8 @@
 "title.confirm" = "Confirm";
 "title.yes" = "Yes";
 "title.no" = "No";
+"title.ok" = "Ok";
+"title.profile" = "Profile";
 
 // MARK: - Alert
 
@@ -23,6 +25,9 @@
 
 "alert.title.logout" = "Logout";
 "alert.message.logout" = "Are you sure to log out from this account?";
+
+"alert.title.connectionError" = "Oops!";
+"alert.message.connectionError" = "Something went wrong";
 
 
 // MARK: - Login
@@ -43,3 +48,5 @@
 
 "profileController.button.playAgain" = "Play again";
 "profileController.label.lastScore" = "Last score:";
+"profileController.label.bestScore" = "Best score:";
+"profileController.label.titleTableView" = "Your score history";

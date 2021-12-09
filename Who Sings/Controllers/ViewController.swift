@@ -45,9 +45,10 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
                 
                 if let artists = artists {
                     Utility.artists = artists
-                    
                     completion()
                 }
+            } errorCompletion: {
+                self.showConnectionError()
             }
         } else {
             completion()
@@ -69,6 +70,8 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
                 next.delegate = self
                 next.modalPresentationStyle = .fullScreen
                 self?.present(next, animated: true)
+            } errorCompletion: {
+                self.showConnectionError()
             }
         }
     }
@@ -86,6 +89,19 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
         let navigation = UINavigationController(rootViewController: next)
         navigation.modalPresentationStyle = .fullScreen
         present(navigation, animated: true, completion: nil)
+    }
+    
+    private func showConnectionError() {
+        MBProgressHUD.hide(for: view, animated: true)
+        
+        UIUtility.showSimpleAlert(title: "alert.title.connectionError", message: "alert.message.connectionError", button: "title.ok", controller: self) {
+            
+            if UserUtility.connectedUser == nil {
+                self.goToLogin()
+            } else {
+                self.goToProfile()
+            }
+        }
     }
     
     // MARK: - LoginController Delegate

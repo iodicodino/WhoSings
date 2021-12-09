@@ -25,14 +25,17 @@ class Constants {
     static var padding: CGFloat { return 30 }
     static var buttonHeight: CGFloat { return 50 }
     static var buttonCornerRadius: CGFloat { return 8 }
+    static var inset: CGFloat { return 10 }
     
     
     // MARK: - Colors
     
-    static var salmon: UIColor { return UIColor(rgb: 0xee655b) }
+    static var salmon: UIColor { return UIColor(rgb: 0xd982ae) }
     static var background: UIColor { return UIColor(rgb: 0xf8fafb) }
     static var border: UIColor { return UIColor(rgb: 0xeeeeee) }
     static var purple: UIColor { return UIColor(rgb: 0x6574ea) }
+    static var green: UIColor { return UIColor(rgb: 0x3cd4b2)}
+    static var red: UIColor { return UIColor(rgb: 0xc3406f)}
     
     
     // MARK: - Images

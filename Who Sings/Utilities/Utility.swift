@@ -20,7 +20,7 @@ class Utility {
     
     private static var APIMessageIndicator: String = "*******"
     
-    static func getRandomLineFromLyrics(_ lyrics: String) -> String {
+    static func getRandomLineFromLyrics(_ lyrics: String) -> String? {
         
         var lineArray = lyrics.components(separatedBy: "\n")
         
@@ -39,7 +39,7 @@ class Utility {
         
         // Filter empty lines. Lines should have at least one allowed character
         lineArray = lineArray.filter({($0.isEmpty == false) && ($0.rangeOfCharacter(from: set) != nil)})
-        let randomLine = lineArray.randomElement()!
+        let randomLine = lineArray.randomElement()
         
         return randomLine
     }

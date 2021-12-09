@@ -48,6 +48,7 @@ class NetworkUtility {
             if statusCode != 200 {
                 //Error
                 print("*** NETWORK ERROR: \(statusCode ?? 0) - Something went wrong")
+                completion?(nil)
             } else {
                 let track = NetworkParser.parseTrackList(response.value).first
                 completion?(track)
@@ -78,7 +79,7 @@ class NetworkUtility {
         }
     }
     
-    static func requestRandomTrackWithRandomLine(_ completion: TrackAndLineCompletion?) {
+    static func requestRandomTrackWithRandomLine(_ completion: TrackAndLineCompletion?, errorCompletion: EmptyCompletion?) {
         
         requestSongFromRandomPage {
             track in
@@ -87,10 +88,12 @@ class NetworkUtility {
                 requestLyrics(fromTrack: track) { lyrics in
                     if let lyrics = lyrics {
                         
-                        let line = Utility.getRandomLineFromLyrics(lyrics)
+                        let line = Utility.getRandomLineFromLyrics(lyrics) ?? ""
                         completion?(track, line)
                     }
                 }
+            } else {
+                errorCompletion?()
             }
         }
     }
@@ -98,7 +101,7 @@ class NetworkUtility {
     
     // MARK: - Artists
     
-    static func requestArtists(completion: ArtistsCompletion?) {
+    static func requestArtists(completion: ArtistsCompletion?, errorCompletion: EmptyCompletion?) {
         let url = endpoint + "chart.artists.get?page=1&page_size=100&apikey=\(apikey)"
         print("REQUEST FROM URL: \(url)")
         
@@ -112,6 +115,7 @@ class NetworkUtility {
             if statusCode != 200 {
                 //Error
                 print("*** NETWORK ERROR: \(statusCode ?? 0) - Something went wrong")
+                errorCompletion?()
             } else {
                 let artists = NetworkParser.parseArtistList(response.value)
                 completion?(artists)
@@ -119,13 +123,15 @@ class NetworkUtility {
         }
     }
     
-    static func requestRandomArtist(_ number: Int, completion: ArtistsCompletion?) {
+    static func requestRandomArtist(_ number: Int, completion: ArtistsCompletion?, errorCompletion: EmptyCompletion?) {
         NetworkUtility.requestArtists {
             artists in
             
             if let pickedArray = artists?.choose(number) {
                 completion?(Array(pickedArray))
             }
+        } errorCompletion: {
+            errorCompletion?()
         }
     }
 }

@@ -79,6 +79,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         textField.delegate = self
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
         
         // UI
         view.backgroundColor = Constants.background
@@ -97,7 +99,12 @@ class LoginController: UIViewController, UITextFieldDelegate {
         
         addConstraints()
     }
-
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NotificationCenter.default.removeObserver(self)
+    }
 
     private func addConstraints() {
         var constraints = [NSLayoutConstraint]()
@@ -190,12 +197,31 @@ class LoginController: UIViewController, UITextFieldDelegate {
         } else {
             UIUtility.showConfirmationAlert(title: "alert.title.userNotAvailable", message: "alert.message.userNotAvailable", buttonOk: "alert.yesButton.userNotAvailable", buttonClose: "alert.noButton.userNotAbailable", controller: self) {
                 
-                UserUtility.setConnectedUser(user)
-                
-                self.delegate?.didStartGame(self)
-                self.dismiss(animated: true)
+                if let storedUser = UserUtility.getUserFromStored(user) {
+                    UserUtility.setConnectedUser(storedUser)
+                    
+                    self.delegate?.didStartGame(self)
+                    self.dismiss(animated: true)
+                }
             }
         }
+    }
+    
+    
+    // MARK: - Keyboard notifications
+    
+    @objc func keyboardWillAppear(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            // Change scrollview's insets to correct visualization while keyboard is shown
+            self.scrollView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        }
+    }
+
+    @objc func keyboardWillDisappear() {
+        // Reset keyboard insets
+        self.scrollView.contentInset = .zero
     }
 }
 
