@@ -189,14 +189,16 @@ class LoginController: UIViewController, UITextFieldDelegate {
         user.name = textField.text
         
         if isAvailable {
+            // Username available, connect and add user to stored
             UserUtility.setConnectedUser(user)
             UserUtility.addUserToStored(user)
             
             self.delegate?.didStartGame(self)
             self.dismiss(animated: true)
         } else {
+            // Username taken yet, show alert
             UIUtility.showConfirmationAlert(title: "alert.title.userNotAvailable", message: "alert.message.userNotAvailable", buttonOk: "alert.yesButton.userNotAvailable", buttonClose: "alert.noButton.userNotAbailable", controller: self) {
-                
+                // Accept to login with stored user
                 if let storedUser = UserUtility.getUserFromStored(user) {
                     UserUtility.setConnectedUser(storedUser)
                     

@@ -23,7 +23,7 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        // This code runs the first time only
         if isFirstSetup {
             isFirstSetup = false
             
@@ -95,7 +95,7 @@ class ViewController: UIViewController, LoginControllerDelegate, QuizControllerD
         MBProgressHUD.hide(for: view, animated: true)
         
         UIUtility.showSimpleAlert(title: "alert.title.connectionError", message: "alert.message.connectionError", button: "title.ok", controller: self) {
-            
+            // Go back to previous screen
             if UserUtility.connectedUser == nil {
                 self.goToLogin()
             } else {

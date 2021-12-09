@@ -242,6 +242,7 @@ class ProfileController: UIViewController, UITableViewDelegate, UITableViewDataS
     
     @objc func didTapOnExitButton() {
         UIUtility.showConfirmationAlert(title: "alert.title.logout", message: "alert.message.logout", buttonOk: "title.yes", buttonClose: "title.no", controller: self) {
+            // Logout
             UserUtility.disconnectCurrentUser()
             
             self.dismiss(animated: true) {

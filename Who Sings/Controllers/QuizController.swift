@@ -126,7 +126,7 @@ class QuizController: UIViewController {
         // Notification Center
         NotificationCenter.default.addObserver(self, selector: #selector(adaptToRotation), name: UIDevice.orientationDidChangeNotification, object: nil)
 
-        /// Button
+        // Button
         continueButton.isEnabled = false
         continueButton.isUserInteractionEnabled = false
         continueButton.alpha = 0.5
@@ -140,7 +140,7 @@ class QuizController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         cardSongLabel.text = line
-        
+        // Setup all the options in random place
         options = [
             Option(button: firstOptionButton, label: firstOptionLabel, isRight: false),
             Option(button: secondOptionButton, label: secondOptionLabel, isRight: false),
@@ -166,7 +166,7 @@ class QuizController: UIViewController {
         super.viewDidAppear(animated)
         
         var counter = Constants.timePerQuestion
-        
+        // Setup timer
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
             [weak self] timer in
             counter -= 1
